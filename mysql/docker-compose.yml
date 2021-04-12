@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  mysql_db:
+    image: mysql:8.0.22
+    container_name: mysql_db_8_0_22
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: hp_root_123
+      MYSQL_USER: hp_dev
+      MYSQL_PASSWORD: hp_dev_123
+    ports:
+    - '23306:3306'
+    volumes:
+      - './assets/data:/var/lib/mysql'
+      - './assets/conf:/etc/mysql/conf.d'
+  phpmyadmin:
+    image: phpmyadmin:5.1.0
+    container_name: phpmyadmin_5_1_0
+    restart: always
+    ports:
+      - 28080:80
+    environment:
+      PMA_HOST: mysql_db
+    
+

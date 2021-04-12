@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: mongo_4_4
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - frontend
+    volumes:
+      - "./assets/data/db:/mongo/data/db"
+      - "./assets/log:/mongo/log"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: hp_root_123
+    command: --dbpath /mongo/data/db --logpath /mongo/log/mongo_log.log --auth
+
+  mongo-express:
+    image: mongo-express:0.54.0
+    container_name: mongo_express_0_54_0
+    restart: always
+    depends_on:
+      - mongo
+    networks: #express必须和mongo同在一个network下才能访问到
+      - frontend
+    ports:
+      - "27016:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo_4_4 #服务名是mongo容器的名字
+      ME_CONFIG_BASICAUTH_USERNAME: hp_dev #登陆页面时候的用户名
+      ME_CONFIG_BASICAUTH_PASSWORD: hp_dev_123 #登陆页面的用户密码
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root #mongo验证的用户名
+      ME_CONFIG_MONGODB_ADMINPASSWORD: hp_root_123 #mongo验证的用户密码
+
+networks:
+  frontend:
